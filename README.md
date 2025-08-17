@@ -1,6 +1,6 @@
 # Full Stack AI Fianace Platform with Next JS, Supabase, Tailwind, Prisma, Inngest, ArcJet, Shadcn UI by Krish Gupta email: krigup789@gmail.com
 
-<img width="1470" alt="Screenshot 2024-12-10 at 9 45 45 AM" src="/bannerimg.png">
+<img width="1280" alt="Dashboard Preview" src="/bannerimg.png">
 
 ### Make sure to create a `.env` file with following variables -
 
