@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Pie, Line } from "react-chartjs-2";
 import { useTheme } from "next-themes";
 import {
@@ -44,9 +44,8 @@ function fmt(value) {
   return value.toLocaleString("en-IN", { minimumFractionDigits: 2 });
 }
 
-
-
 export default function SWPCalculator() {
+  // Inputs
   const [initial, setInitial] = useState(10000000);
   const [holdYears, setHoldYears] = useState(1);
   const [withdraw, setWithdraw] = useState(10000);
@@ -55,6 +54,7 @@ export default function SWPCalculator() {
   const [inflation, setInflation] = useState(10);
   const [taxRate, setTaxRate] = useState(10);
 
+  // Results
   const [result, setResult] = useState(null);
   const [growthTable, setGrowthTable] = useState([]);
   const [showResult, setShowResult] = useState(false);
@@ -78,34 +78,48 @@ export default function SWPCalculator() {
       const currentYear = startYear + year - 1;
       let yearOpening = balance;
       let yearWithdraw = 0;
+      let yearGrowth = 0;
+
+      // SWP shown for this year
+      const displayedSwpForYear = year > holdYears ? withdrawAmount : 0;
 
       for (let m = 0; m < 12; m++) {
+        // growth first
+        const monthlyGrowth = balance * (rate / 12);
+        balance += monthlyGrowth;
+        yearGrowth += monthlyGrowth;
+
+        // then withdrawal (if past holding years)
         if (year > holdYears) {
-          const monthlyTax = withdrawAmount * (tax / 12);
-          swpTaxes += monthlyTax;
-          totalWithdraw += withdrawAmount;
-          yearWithdraw += withdrawAmount;
           balance -= withdrawAmount;
+          yearWithdraw += withdrawAmount;
+          totalWithdraw += withdrawAmount;
         }
-        balance *= 1 + rate / 12;
       }
 
+      // tax for this year (based on withdrawn)
+      const taxForYear = yearWithdraw * tax;
+      swpTaxes += taxForYear;
+
+      // add row to table
       table.push({
         year: currentYear,
         opening: Number(yearOpening.toFixed(2)),
-        growth: Number((balance - yearOpening - yearWithdraw).toFixed(2)),
+        growth: Number(yearGrowth.toFixed(2)),
         Withdrawal: Number(yearWithdraw.toFixed(2)),
-        SWPInflation: Number((balance - yearOpening - yearWithdraw).toFixed(2)),
-        TAX: Number(
-          (swpTaxes + (balance - yearOpening - yearWithdraw) * tax).toFixed(2)
-        ),
+        SWPInflation: Number(displayedSwpForYear.toFixed(2)),
+        TAX: Number(taxForYear.toFixed(2)),
         closing: Number(balance.toFixed(2)),
       });
 
-      if (year === duration) lastSWP = withdrawAmount;
-      withdrawAmount *= 1 + infRate;
+      // update last SWP at end of this year
+      if (year > holdYears) {
+        lastSWP = withdrawAmount;
+        withdrawAmount *= 1 + infRate; // inflate for next year
+      }
     }
 
+    // final redemption tax (after duration)
     const capitalGain = balance - initial;
     const taxableGain = Math.max(capitalGain - 100000, 0);
     const redemptionTax = taxableGain * tax;
@@ -126,7 +140,7 @@ export default function SWPCalculator() {
       taxSWP: Number(swpTaxes.toFixed(2)),
       taxRedemption: Number(redemptionTax.toFixed(2)),
       firstSWP: Number(firstSWP.toFixed(2)),
-      lastSWP: Number(lastSWP.toFixed(2)),
+      lastSWP: Number(lastSWP.toFixed(2)), // ✅ fixed
       corpusEndYear: startYear + duration,
     });
 
@@ -134,22 +148,22 @@ export default function SWPCalculator() {
     setShowResult(true);
   };
 
-
+  // Chart Data
   const lineData = {
     labels: growthTable.map((r) => r.year),
     datasets: [
       {
         label: "Total Withdrawn",
         data: growthTable.map((r) => r.Withdrawal),
-        borderColor: "#4B0082", // Indigo
+        borderColor: "#4B0082",
         backgroundColor: "rgba(75, 0, 130, 0.3)",
         fill: true,
         tension: 0.3,
       },
       {
-        label: "Total Growth",
+        label: "Closing Balance",
         data: growthTable.map((r) => r.closing),
-        borderColor: "#228B22", // Forest Green
+        borderColor: "#228B22",
         backgroundColor: "rgba(34, 139, 34, 0.3)",
         fill: true,
         tension: 0.3,
@@ -157,22 +171,16 @@ export default function SWPCalculator() {
     ],
   };
 
-  const { theme } = useTheme();    // "light" | "dark" | "system"
+  const { theme } = useTheme();
   const isDark = theme === "dark";
-
   const labelColor = isDark ? "#E5E5E5" : "#222";
-  const gridColor  = isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)";
-
+  const gridColor = isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)";
 
   const lineOpts = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      legend: { 
-        display: true, 
-        position: "top",
-        labels: { color: labelColor },
-      },
+      legend: { display: true, position: "top", labels: { color: labelColor } },
       tooltip: {
         enabled: true,
         mode: "index",
@@ -184,12 +192,12 @@ export default function SWPCalculator() {
       },
     },
     scales: {
-      x: { 
+      x: {
         title: { display: true, text: "Year", color: labelColor },
         ticks: { color: labelColor },
         grid: { color: gridColor },
       },
-      y: { 
+      y: {
         title: { display: true, text: "Amount (₹)", color: labelColor },
         ticks: { color: labelColor },
         grid: { color: gridColor },
@@ -201,6 +209,7 @@ export default function SWPCalculator() {
     <div className="max-w-4xl mx-auto px-4 py-8 text-gray-900 dark:text-gray-100">
       <h2 className="text-5xl font-semibold mb-6">SWP Calculator</h2>
 
+      {/* Form */}
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -233,9 +242,11 @@ export default function SWPCalculator() {
         </button>
       </form>
 
+      {/* Results */}
       {showResult && result && (
         <>
           <div className="mt-10 grid md:grid-cols-2 gap-4">
+            {/* Summary */}
             <div className="border border-gray-200 dark:border-gray-700 p-4 rounded bg-white dark:bg-gray-800 text-sm">
               <h3 className="text-lg font-semibold mb-2">Summary</h3>
               <SummaryCard label="Initial Investment" value={`₹${fmt(result.investment)}`} />
@@ -254,6 +265,7 @@ export default function SWPCalculator() {
               </div>
             </div>
 
+            {/* Pie Chart */}
             <div className="border border-gray-200 dark:border-gray-700 p-4 rounded bg-white dark:bg-gray-800">
               <h3 className="text-lg font-semibold mb-4">Investment vs Profit</h3>
               <Pie
@@ -270,21 +282,41 @@ export default function SWPCalculator() {
                 }}
                 options={{
                   plugins: {
-                    legend: {
-                      labels: {
-                        color: labelColor, // ✅ legend label color adapts
-                      },
-                    },
-                    // tooltip: {
-                    //   titleColor: labelColor, // ✅ tooltip title adapts
-                    //   bodyColor: labelColor,  // ✅ tooltip text adapts
-                    // },
+                    legend: { labels: { color: labelColor } },
                   },
                 }}
               />
             </div>
           </div>
 
+          {/* Growth Table */}
+          <div className="mt-8 border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-800 shadow-sm overflow-auto">
+            <h3 className="text-lg font-semibold px-4 pt-4">Growth Table</h3>
+            <table className="min-w-full text-sm text-left mt-2">
+              <thead className="bg-gray-100 dark:bg-gray-700">
+                <tr>
+                  {["Year", "Opening Balance", "Growth", "Withdrawal", "SWP (inflated)", "TAX", "Closing Balance"].map((head, i) => (
+                    <th key={i} className="px-4 py-2 text-right first:text-left">{head}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {growthTable.map((row, i) => (
+                  <tr key={i} className="border-b border-gray-200 dark:border-gray-700">
+                    <td className="px-4 py-2">{row.year}</td>
+                    <td className="px-4 py-2 text-right">₹{fmt(row.opening)}</td>
+                    <td className="px-4 py-2 text-right">{fmt(row.growth)}</td>
+                    <td className="px-4 py-2 text-right">₹{fmt(row.Withdrawal)}</td>
+                    <td className="px-4 py-2 text-right">₹{fmt(row.SWPInflation)}</td>
+                    <td className="px-4 py-2 text-right">₹{fmt(row.TAX)}</td>
+                    <td className="px-4 py-2 text-right font-semibold">₹{fmt(row.closing)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Line Chart */}
           <div className="mt-8 border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-800 shadow-sm p-4 h-[400px]">
             <h3 className="text-lg font-semibold mb-4">Withdraw vs Growth</h3>
             <Line data={lineData} options={lineOpts} />
