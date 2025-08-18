@@ -20,7 +20,9 @@ export default function RootLayout({ children }) {
         <head>
           <link rel="icon" href="/favicon-dark.png" />
         </head>
-        <body className={`font-sans ${inter.variable} bg-background text-foreground antialiased`}>
+        <body
+          className={`font-sans ${inter.variable} bg-background text-foreground antialiased`}
+        >
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <Header />
             <main className="min-h-screen container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

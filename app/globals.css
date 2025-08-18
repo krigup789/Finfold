@@ -90,7 +90,6 @@ body {
   }
 }
 
-
 @layer utilities {
   .gradient {
     @apply bg-gradient-to-br from-blue-600 to-purple-600;

@@ -11,19 +11,9 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-import {
-  format,
-  subDays,
-  startOfDay,
-  endOfDay
-} from "date-fns";
+import { format, subDays, startOfDay, endOfDay } from "date-fns";
 
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -51,9 +41,7 @@ export function AccountChart({ transactions }) {
       : startOfDay(new Date(0));
 
     const filtered = transactions.filter(
-      (t) =>
-        new Date(t.date) >= startDate &&
-        new Date(t.date) <= endOfDay(now)
+      (t) => new Date(t.date) >= startDate && new Date(t.date) <= endOfDay(now)
     );
 
     const grouped = filtered.reduce((acc, transaction) => {
@@ -186,7 +174,6 @@ export function AccountChart({ transactions }) {
     </Card>
   );
 }
-
 
 // Style a line chart or pie chart similarly?
 

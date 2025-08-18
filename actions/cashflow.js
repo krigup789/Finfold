@@ -16,8 +16,16 @@ export async function getCashFlow(accountId) {
     if (!user) throw new Error("User not found");
 
     const currentDate = new Date();
-    const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-    const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+    const startOfMonth = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth(),
+      1
+    );
+    const endOfMonth = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth() + 1,
+      0
+    );
 
     // Aggregate Income
     const incomeAgg = await db.transaction.aggregate({
@@ -41,17 +49,31 @@ export async function getCashFlow(accountId) {
       },
       _sum: { amount: true },
     });
-    const expense = expenseAgg._sum.amount ? expenseAgg._sum.amount.toNumber() : 0;
+    const expense = expenseAgg._sum.amount
+      ? expenseAgg._sum.amount.toNumber()
+      : 0;
 
     // Aggregate Invested
     const investedAgg = await db.account.aggregate({
       where: {
         userId: user.id,
-        type: { in: ["STOCK", "MUTUAL_FUND", "FD", "CRYPTO", "GOLD", "REAL_ESTATE", "OTHER"] },
+        type: {
+          in: [
+            "STOCK",
+            "MUTUAL_FUND",
+            "FD",
+            "CRYPTO",
+            "GOLD",
+            "REAL_ESTATE",
+            "OTHER",
+          ],
+        },
       },
       _sum: { balance: true },
     });
-    const invested = investedAgg._sum.balance ? investedAgg._sum.balance.toNumber() : 0;
+    const invested = investedAgg._sum.balance
+      ? investedAgg._sum.balance.toNumber()
+      : 0;
 
     // Calculate Net
     const net = income - expense;

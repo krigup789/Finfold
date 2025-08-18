@@ -122,7 +122,7 @@ export async function createAccount(data) {
         userId: user.id,
         isDefault: shouldBeDefault, // Override the isDefault based on our logic
       },
-    }); 
+    });
 
     // Serialize the account before returning
     const serializedAccount = serializeTransaction(account);

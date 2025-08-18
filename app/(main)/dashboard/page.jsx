@@ -13,7 +13,6 @@ import { CashFlowCard } from "./_components/cashflow";
 import { Card, CardContent } from "@/components/ui/card";
 import { Plus } from "lucide-react";
 
-
 // ----------------------
 // Budget Section Wrapper
 // ----------------------
@@ -86,17 +85,23 @@ export default async function DashboardPage() {
   return (
     <div className="space-y-8">
       {/* Budget Tracker */}
-      <Suspense fallback={<div className="animate-pulse">Loading budget...</div>}>
+      <Suspense
+        fallback={<div className="animate-pulse">Loading budget...</div>}
+      >
         <BudgetSection accounts={accounts} />
       </Suspense>
 
       {/* Net Worth Summary */}
-      <Suspense fallback={<div className="animate-pulse">Loading net worth...</div>}>
+      <Suspense
+        fallback={<div className="animate-pulse">Loading net worth...</div>}
+      >
         <NetWorthSection accounts={accounts} />
       </Suspense>
 
       {/* Income vs Expenses Chart */}
-      <Suspense fallback={<div className="animate-pulse">Loading transactions...</div>}>
+      <Suspense
+        fallback={<div className="animate-pulse">Loading transactions...</div>}
+      >
         <TransactionsSection
           accountsPromise={accountsPromise}
           transactionsPromise={transactionsPromise}
@@ -104,7 +109,9 @@ export default async function DashboardPage() {
       </Suspense>
 
       {/* Cash Flow Overview */}
-      <Suspense fallback={<div className="animate-pulse">Loading cash flow...</div>}>
+      <Suspense
+        fallback={<div className="animate-pulse">Loading cash flow...</div>}
+      >
         <CashFlowSection accounts={accounts} />
       </Suspense>
 

@@ -5,10 +5,28 @@ import { currentUser } from "@clerk/nextjs/server"; // ✅ Server-safe import
 
 // Format date with day of the week
 function formatDateWithDay(date) {
-  const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  const days = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+  ];
   const months = [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
   ];
   const day = days[date.getDay()];
   const dayOfMonth = date.getDate();
@@ -47,7 +65,9 @@ export default async function Layout() {
       </div>
 
       {/* Suspense for async content */}
-      <Suspense fallback={<BarLoader className="mt-4" width={"100%"} color="#9333ea" />}>
+      <Suspense
+        fallback={<BarLoader className="mt-4" width={"100%"} color="#9333ea" />}
+      >
         <DashboardPage />
       </Suspense>
     </div>

@@ -132,7 +132,9 @@ export function ChartAreaDefault({ accounts }) {
       <CardHeader className="flex flex-col sm:flex-row sm:justify-between gap-6 pb-5">
         {/* Left side: Title + Description */}
         <div className="flex flex-col">
-          <CardTitle className="text-3xl sm:text-4xl font-semibold">Net Worth</CardTitle>
+          <CardTitle className="text-3xl sm:text-4xl font-semibold">
+            Net Worth
+          </CardTitle>
           <CardDescription className="mt-2 text-muted-foreground">
             Showing monthly trend of net worth
           </CardDescription>
@@ -170,10 +172,6 @@ export function ChartAreaDefault({ accounts }) {
         </div>
       </CardHeader>
 
-
-
-
-
       <CardContent className="h-[250px]">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={chartData}>
@@ -194,7 +192,10 @@ export function ChartAreaDefault({ accounts }) {
               }
             />
             <Tooltip
-              formatter={(value) => [formatINR(Math.max(0, value)), "Net Worth"]}
+              formatter={(value) => [
+                formatINR(Math.max(0, value)),
+                "Net Worth",
+              ]}
               labelFormatter={(label) =>
                 format(new Date(`${label}-01`), "MMM yyyy")
               }
@@ -224,9 +225,7 @@ export function ChartAreaDefault({ accounts }) {
               {isTrendingUp ? "Trending up" : "Trending down"}
               <TrendingUp
                 className={`h-4 w-4 ${
-                  isTrendingUp
-                    ? "text-green-600"
-                    : "text-red-600 rotate-180"
+                  isTrendingUp ? "text-green-600" : "text-red-600 rotate-180"
                 }`}
               />
             </div>

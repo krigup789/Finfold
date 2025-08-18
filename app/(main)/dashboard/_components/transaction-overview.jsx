@@ -34,12 +34,8 @@ const CustomTooltip = ({ active, payload, label }) => {
       <p className="font-medium">{label}</p>
       <p>₹{payload[0].value.toFixed(2)} Spent</p>
     </div>
-
   );
 };
-
-
-
 
 const COLORS = [
   "#FF6B6B",
@@ -95,7 +91,6 @@ export function DashboardOverview({ accounts, transactions }) {
       maximumFractionDigits: 2,
     }).format(value);
 
-
   return (
     <div className="grid gap-6 md:grid-cols-2 min-h-[320px]">
       {/* ✅ Recent Transactions Card */}
@@ -105,17 +100,26 @@ export function DashboardOverview({ accounts, transactions }) {
             Recent Transactions
           </CardTitle>
           <Select value={selectedAccountId} onValueChange={setSelectedAccountId}>
-            <SelectTrigger className="w-[140px] h-8 text-sm border-muted bg-muted/30 text-muted-foreground rounded-md">
+            <SelectTrigger
+              className="w-[140px] h-8 text-sm border border-border bg-background text-foreground 
+                        placeholder:text-muted-foreground rounded-md focus:ring-2 focus:ring-ring"
+            >
               <SelectValue placeholder="Select account" />
             </SelectTrigger>
-            <SelectContent className="bg-gray-50">
+
+            <SelectContent className="bg-background text-foreground border border-border rounded-md shadow-md">
               {accounts.map((account) => (
-                <SelectItem key={account.id} value={account.id}>
+                <SelectItem
+                  key={account.id}
+                  value={account.id}
+                  className="hover:bg-accent hover:text-accent-foreground cursor-pointer"
+                >
                   {account.name}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
+
         </CardHeader>
 
         <CardContent className="pt-0">
@@ -166,7 +170,6 @@ export function DashboardOverview({ accounts, transactions }) {
         </CardContent>
       </Card>
 
-
       {/* ✅ Monthly Expense Breakdown */}
       <Card className="rounded-2xl border bg-background shadow-sm hover:shadow-md transition-all duration-300">
         <CardHeader className="pb-4">
@@ -188,11 +191,13 @@ export function DashboardOverview({ accounts, transactions }) {
                     data={pieChartData}
                     cx="50%"
                     cy="50%"
-                    innerRadius={70}    // hollow center
-                    outerRadius={120}   // larger overall pie
+                    innerRadius={70} // hollow center
+                    outerRadius={120} // larger overall pie
                     dataKey="value"
                     labelLine={false}
-                    label={({ name, value }) => `${name}: ${formatINR(value.toFixed(0))}`}
+                    label={({ name, value }) =>
+                      `${name}: ${formatINR(value.toFixed(0))}`
+                    }
                   >
                     {pieChartData.map((_, index) => (
                       <Cell
@@ -202,7 +207,6 @@ export function DashboardOverview({ accounts, transactions }) {
                     ))}
                   </Pie>
 
-                  // Usage
                   <Tooltip content={<CustomTooltip />} />
 
                   <Legend

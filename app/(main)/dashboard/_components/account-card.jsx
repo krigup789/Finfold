@@ -46,14 +46,13 @@ export function AccountCard({ account }) {
     }
   }, [error]);
 
-    // ✅ Currency formatter for INR
+  // ✅ Currency formatter for INR
   const formatINR = (value) =>
     new Intl.NumberFormat("en-IN", {
       style: "currency",
       currency: "INR",
       maximumFractionDigits: 2,
     }).format(value);
-
 
   return (
     <Card className="min-h-[220px] min-w-96 bg-card text-foreground hover:shadow-md transition-shadow group relative flex flex-col justify-between">

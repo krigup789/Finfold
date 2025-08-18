@@ -1,12 +1,12 @@
 // SWP calculation logic as a pure React-friendly function
 export function calculateSWPPlan({
-  initialInvestment,     // ₹1,00,00,000
-  annualReturnRate,      // 12%
-  holdingYears,          // 1
-  swpYears,              // 10
-  monthlySWPBase,        // ₹10,000
-  inflationRate,         // 6%
-  tdsRate,               // 10%
+  initialInvestment, // ₹1,00,00,000
+  annualReturnRate, // 12%
+  holdingYears, // 1
+  swpYears, // 10
+  monthlySWPBase, // ₹10,000
+  inflationRate, // 6%
+  tdsRate, // 10%
   finalCapitalGainsTaxRate = 10, // 10% for equity, optional
 }) {
   const monthlyRate = annualReturnRate / 12 / 100; // e.g., 1% per month
@@ -23,7 +23,7 @@ export function calculateSWPPlan({
 
   // 1️⃣ Holding Phase: Monthly Compounding
   for (let i = 0; i < totalHoldingMonths; i++) {
-    corpus *= (1 + monthlyRate); // monthly compounding
+    corpus *= 1 + monthlyRate; // monthly compounding
     growthTable.push({
       month: i + 1,
       phase: "Holding",
@@ -39,7 +39,8 @@ export function calculateSWPPlan({
   // 2️⃣ SWP Phase: Withdraw monthly, increase yearly by inflation
   for (let m = 0; m < totalSWPMonths; m++) {
     const currentYear = Math.floor(m / 12);
-    const adjustedSWP = monthlySWPBase * Math.pow(1 + inflationDecimal, currentYear);
+    const adjustedSWP =
+      monthlySWPBase * Math.pow(1 + inflationDecimal, currentYear);
     const tds = adjustedSWP * tdsDecimal;
     const netWithdrawal = adjustedSWP - tds;
 

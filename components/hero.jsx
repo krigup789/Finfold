@@ -2,8 +2,6 @@
 
 import React, { useEffect, useRef } from "react";
 import Image from "next/image";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
 
 const HeroSection = () => {
   const imageRef = useRef(null);
@@ -31,23 +29,15 @@ const HeroSection = () => {
       <div className="max-w-screen-xl mx-auto text-center">
         {/* Gradient Title */}
         <h1 className="gradient-title text-5xl md:text-7xl lg:text-[100px] leading-tight font-bold mb-6">
-          Manage Your Investments <br className="hidden sm:block" />& Plan Financial Freedom
+          Manage Your Investments <br className="hidden sm:block" />& Plan
+          Financial Freedom
         </h1>
 
         {/* Subheading */}
         <p className="text-lg md:text-xl text-muted-foreground mb-10 max-w-2xl mx-auto">
-          An AI-powered financial platform to track, analyze, and optimize your wealth with real-time insights.
+          An AI-powered financial platform to track, analyze, and optimize your
+          wealth with real-time insights.
         </p>
-
-        {/* CTA Buttons - Uncomment if needed */}
-        {/* <div className="flex justify-center gap-4">
-          <Link href="/dashboard">
-            <Button size="lg" className="px-8">Get Started</Button>
-          </Link>
-          <Link href="https://youtube.com" target="_blank">
-            <Button size="lg" variant="outline" className="px-8">Watch Demo</Button>
-          </Link>
-        </div> */}
 
         {/* Animated Image */}
         <div className="hero-image-wrapper mt-10 md:mt-16">
@@ -58,7 +48,7 @@ const HeroSection = () => {
               height={720}
               alt="Dashboard Preview"
               className="rounded-xl shadow-2xl border border-border mx-auto dark:hidden transition-transform duration-500 ease-in-out transform hover:scale-105 scrolled:scale-110"
-              priority 
+              priority
             />
             <Image
               src="/bannerimg-lg.jpeg"
@@ -66,7 +56,7 @@ const HeroSection = () => {
               height={720}
               alt="Dashboard Preview"
               className="rounded-xl shadow-2xl border border-border mx-auto hidden dark:block transition-transform duration-500 ease-in-out transform hover:scale-105 scrolled:scale-110"
-              priority 
+              priority
             />
           </div>
         </div>

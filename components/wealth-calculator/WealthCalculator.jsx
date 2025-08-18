@@ -1,7 +1,6 @@
 "use client"; // Required in Next.js app directory
 
 import React, { useState } from "react";
-import { Button } from "../ui/button";
 import { useTheme } from "next-themes"; // For dark mode support
 
 // Import chart.js modules
@@ -40,20 +39,13 @@ function SummaryCard({ label, value, highlight = false }) {
   );
 }
 
-// Format number with commas
-function formatValue(value) {
-  if (typeof value === "string") return value;
-  if (value === null || value === undefined) return "";
-  return value.toLocaleString(); 
-}
-
-    // ✅ Currency formatter for INR
-  const formatINR = (value) =>
-    new Intl.NumberFormat("en-IN", {
-      style: "currency",
-      currency: "INR",
-      maximumFractionDigits: 2,
-    }).format(value);
+// ✅ Currency formatter for INR
+const formatINR = (value) =>
+  new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+    maximumFractionDigits: 2,
+  }).format(value);
 
 export default function WealthCalculator() {
   // Basic Inputs
@@ -69,11 +61,6 @@ export default function WealthCalculator() {
   const [stopAfterYears, setStopAfterYears] = useState(5);
   const [showAdvanced, setShowAdvanced] = useState(true);
 
-  // Withdrawals
-  const [withdrawals, setWithdrawals] = useState([
-    { event: "Car", year: 5, amount: 100000 },
-  ]);
-
   // Output
   const [showResult, setShowResult] = useState(false);
   const [growthTable, setGrowthTable] = useState([]);
@@ -85,77 +72,74 @@ export default function WealthCalculator() {
     returnAmount: 0,
   });
 
-  // Add/Remove Withdrawals
-  const handleAddWithdrawal = () => {
-    setWithdrawals([...withdrawals, { event: "", year: 0, amount: 0 }]);
-  };
-  const handleRemoveWithdrawal = (index) => {
-    const updated = withdrawals.filter((_, i) => i !== index);
-    setWithdrawals(updated);
-  };
-
   //opening balance
-  const startingopeningBalance = initialInvestment ;
-  const curryeartable = new Date().getFullYear();
+  const startingopeningBalance = initialInvestment;
 
-  
   // Main Calculation
   const calculate = () => {
     const inflationRate = inflationRatePercent;
     const monthlyRate = (annualReturnRate - inflationRate) / 100 / 12;
     const interestRate = (annualReturnRate - inflationRate) / 100;
     const stepUpRate = stepUpRatePercent / 100;
-    const totalMonths = durationYears * 12;
     const curryear = new Date().getFullYear();
 
     let totalInvestment = initialInvestment;
-    let totalSIP_FV = 0;
-    let yearlyDetails = []; 
+    let yearlyDetails = [];
     let prevYearClosing = 0;
     let fullyearInvestment = initialInvestment;
     let totalSIP_FV_After_Sip_Stopped = 0;
-    let prevFV_lumpYear = 0;
     let FV_totalSIP_FV_After_Sip_Stopped_Year = 0;
-    let totalFV = 0;
 
     for (let year = 0; year < durationYears; year++) {
-      const openingBalance = (curryear + year) === 2025 ? startingopeningBalance : prevYearClosing;
+      const openingBalance =
+        curryear + year === 2025 ? startingopeningBalance : prevYearClosing;
       const isContributing = stopAfterYears === 0 || year < stopAfterYears;
       const sipAmount = isContributing
-        ? monthlySIP * Math.pow(1 + stepUpRate, year) : 0;
+        ? monthlySIP * Math.pow(1 + stepUpRate, year)
+        : 0;
       const monthsLeft = (year + 1) * 12;
       const FV_sip =
         sipAmount *
         ((Math.pow(1 + monthlyRate, monthsLeft) - 1) / monthlyRate) *
         (1 + monthlyRate);
-      
+
       //totalSIP_FV after sip stopped.
-      isContributing ? totalSIP_FV_After_Sip_Stopped = FV_sip : 0;
-      
+      isContributing ? (totalSIP_FV_After_Sip_Stopped = FV_sip) : 0;
+
       // 📈 Lump sum future value till this year
-      const FV_lumpYear = (initialInvestment) * Math.pow(1 + interestRate,(year + 1));
-      
-      isContributing ? 0 : FV_totalSIP_FV_After_Sip_Stopped_Year = (totalSIP_FV_After_Sip_Stopped) * Math.pow(1 + interestRate, year + 1 - stopAfterYears); 
+      const FV_lumpYear =
+        initialInvestment * Math.pow(1 + interestRate, year + 1);
+
+      isContributing
+        ? 0
+        : (FV_totalSIP_FV_After_Sip_Stopped_Year =
+            totalSIP_FV_After_Sip_Stopped *
+            Math.pow(1 + interestRate, year + 1 - stopAfterYears));
 
       totalInvestment += sipAmount * 12;
-      fullyearInvestment += (sipAmount * 12);
-      prevYearClosing = FV_sip + FV_lumpYear + FV_totalSIP_FV_After_Sip_Stopped_Year;
+      fullyearInvestment += sipAmount * 12;
+      prevYearClosing =
+        FV_sip + FV_lumpYear + FV_totalSIP_FV_After_Sip_Stopped_Year;
       //const growthbyyear = initialInvestment === 0 ? totalSIP_FV - fullyearInvestment : fullyearInvestment - totalSIP_FV;
-      //lastYearinvestment = fullyearInvestment; 
-      const selfInvestmentValue = isContributing ? fullyearInvestment : totalSIP_FV_After_Sip_Stopped;
+      //lastYearinvestment = fullyearInvestment;
       yearlyDetails.push({
         year: curryear + year,
         opening: Math.round(openingBalance),
         periodicInvestment: `${formatINR(Math.round(sipAmount))} x 12`,
         selfInvestment: Math.round(fullyearInvestment),
-        growth: Math.round(FV_sip + FV_lumpYear + FV_totalSIP_FV_After_Sip_Stopped_Year - fullyearInvestment),
-        closing: Math.round(FV_sip + FV_lumpYear + FV_totalSIP_FV_After_Sip_Stopped_Year),
+        growth: Math.round(
+          FV_sip +
+            FV_lumpYear +
+            FV_totalSIP_FV_After_Sip_Stopped_Year -
+            fullyearInvestment
+        ),
+        closing: Math.round(
+          FV_sip + FV_lumpYear + FV_totalSIP_FV_After_Sip_Stopped_Year
+        ),
       });
       //prevFV_lumpYear = initialInvestment + totalSIP_FV_After_Sip_Stopped;
     }
 
-    const FV_initial = initialInvestment * Math.pow(1 + monthlyRate, totalMonths);
-    
     // const adjustedFV = totalFV / Math.pow(1 + inflationRate, durationYears);
 
     setResult({
@@ -192,20 +176,20 @@ export default function WealthCalculator() {
     ],
   };
 
-  const { theme } = useTheme();    // "light" | "dark" | "system"
+  const { theme } = useTheme(); // "light" | "dark" | "system"
   const isDark = theme === "dark";
 
   const labelColor = isDark ? "#E5E5E5" : "#222";
-  const gridColor  = isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)";
+  const gridColor = isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)";
 
   const lineChartOptions = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      legend: { 
-        display: true, 
+      legend: {
+        display: true,
         position: "top",
-        labels: { color: labelColor }, 
+        labels: { color: labelColor },
       },
       tooltip: {
         enabled: true,
@@ -222,19 +206,18 @@ export default function WealthCalculator() {
     },
     interaction: { mode: "nearest", intersect: false },
     scales: {
-      x: { title: { display: true, text: "Year", color: labelColor },
-           ticks: { color: labelColor },
-           grid: { color: gridColor },
-     },
-      y: { 
+      x: {
+        title: { display: true, text: "Year", color: labelColor },
+        ticks: { color: labelColor },
+        grid: { color: gridColor },
+      },
+      y: {
         title: { display: true, text: "Amount (₹)", color: labelColor },
         ticks: { color: labelColor },
         grid: { color: gridColor },
       },
     },
   };
-
-
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8 text-gray-900 dark:text-gray-100">
@@ -261,7 +244,9 @@ export default function WealthCalculator() {
 
         {/* Periodic Contribution */}
         <div>
-          <label className="block font-medium mb-1">Periodic Contribution (₹)</label>
+          <label className="block font-medium mb-1">
+            Periodic Contribution (₹)
+          </label>
           <div className="flex gap-2">
             <input
               type="number"
@@ -292,7 +277,9 @@ export default function WealthCalculator() {
 
         {/* Expected Rate of Growth */}
         <div>
-          <label className="block font-medium mb-1">Expected Rate of Growth (%)</label>
+          <label className="block font-medium mb-1">
+            Expected Rate of Growth (%)
+          </label>
           <input
             type="number"
             value={annualReturnRate}
@@ -333,7 +320,9 @@ export default function WealthCalculator() {
                 <input
                   type="number"
                   value={inflationRatePercent}
-                  onChange={(e) => setInflationRatePercent(Number(e.target.value))}
+                  onChange={(e) =>
+                    setInflationRatePercent(Number(e.target.value))
+                  }
                   className="w-full border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 rounded px-3 py-2"
                 />
               </div>
@@ -368,15 +357,27 @@ export default function WealthCalculator() {
           <div className="mt-10 grid md:grid-cols-2 gap-4">
             <div className="border p-4 rounded shadow-sm bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
               <h3 className="text-lg font-semibold mb-4">Summary</h3>
-              <SummaryCard label="Investment" value={`${formatINR(result.investment)}`} />
+              <SummaryCard
+                label="Investment"
+                value={`${formatINR(result.investment)}`}
+              />
               <SummaryCard label="Duration" value={`${result.duration} Yrs.`} />
               <SummaryCard label="ROG" value={`${result.rog}%`} />
-              <SummaryCard label="Growth" value={`${formatINR(result.growth)}`} />
-              <SummaryCard label="Return*" value={`${formatINR(result.returnAmount)}`} highlight />
+              <SummaryCard
+                label="Growth"
+                value={`${formatINR(result.growth)}`}
+              />
+              <SummaryCard
+                label="Return*"
+                value={`${formatINR(result.returnAmount)}`}
+                highlight
+              />
             </div>
 
             <div className="border p-4 rounded shadow-sm bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
-              <h3 className="text-lg font-semibold mb-4">Investment vs Growth</h3>
+              <h3 className="text-lg font-semibold mb-4">
+                Investment vs Growth
+              </h3>
               <Pie
                 data={{
                   labels: ["Investment", "Growth"],
@@ -422,13 +423,26 @@ export default function WealthCalculator() {
               </thead>
               <tbody>
                 {growthTable.map((row, i) => (
-                  <tr key={i} className="border-b border-gray-200 dark:border-gray-700">
+                  <tr
+                    key={i}
+                    className="border-b border-gray-200 dark:border-gray-700"
+                  >
                     <td className="px-4 py-2">{row.year}</td>
-                    <td className="px-4 py-2 text-right">{formatINR(row.opening)}</td>
-                    <td className="px-4 py-2 text-right">{row.periodicInvestment}</td>
-                    <td className="px-4 py-2 text-right">{formatINR(row.selfInvestment)}</td>
-                    <td className="px-4 py-2 text-right">{formatINR(row.growth)}</td>
-                    <td className="px-4 py-2 text-right font-semibold">{formatINR(row.closing)}</td>
+                    <td className="px-4 py-2 text-right">
+                      {formatINR(row.opening)}
+                    </td>
+                    <td className="px-4 py-2 text-right">
+                      {row.periodicInvestment}
+                    </td>
+                    <td className="px-4 py-2 text-right">
+                      {formatINR(row.selfInvestment)}
+                    </td>
+                    <td className="px-4 py-2 text-right">
+                      {formatINR(row.growth)}
+                    </td>
+                    <td className="px-4 py-2 text-right font-semibold">
+                      {formatINR(row.closing)}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -437,7 +451,9 @@ export default function WealthCalculator() {
 
           {/* Line Chart */}
           <div className="mt-8 border rounded bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 p-4 h-[400px]">
-            <h3 className="text-lg font-semibold mb-4">Invested vs Wealth Growth</h3>
+            <h3 className="text-lg font-semibold mb-4">
+              Invested vs Wealth Growth
+            </h3>
             <Line data={lineChartData} options={lineChartOptions} />
           </div>
         </>

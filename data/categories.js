@@ -20,7 +20,15 @@ export const defaultCategories = [
     type: "DEPOSIT",
     color: "#6366f1", // indigo-500
     icon: "TrendingUp",
-    subcategories: ["Stocks & ETF's", "Mutaul Funds", " FD's & Bonds", "Crypto", "Gold", "Real Estate", "others"],
+    subcategories: [
+      "Stocks & ETF's",
+      "Mutaul Funds",
+      " FD's & Bonds",
+      "Crypto",
+      "Gold",
+      "Real Estate",
+      "others",
+    ],
   },
   {
     id: "business",

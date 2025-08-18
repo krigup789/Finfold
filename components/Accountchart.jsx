@@ -10,12 +10,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -23,12 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  format,
-  subDays,
-  startOfDay,
-  endOfDay,
-} from "date-fns";
+import { format, subDays, startOfDay, endOfDay } from "date-fns";
 
 const DATE_RANGES = {
   "7D": { label: "Last 7 Days", days: 7 },

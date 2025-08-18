@@ -125,9 +125,7 @@ export default function SWPCalculator() {
     const redemptionTax = taxableGain * tax;
     const finalCorpus = balance - redemptionTax;
 
-    const profit = Number(
-      (finalCorpus + totalWithdraw - initial).toFixed(2)
-    );
+    const profit = Number((finalCorpus + totalWithdraw - initial).toFixed(2));
     const closingBalance = Number(balance.toFixed(2));
 
     setResult({
@@ -186,8 +184,7 @@ export default function SWPCalculator() {
         mode: "index",
         intersect: false,
         callbacks: {
-          label: (ctx) =>
-            `${ctx.dataset.label}: ₹${fmt(ctx.parsed.y || 0)}`,
+          label: (ctx) => `${ctx.dataset.label}: ₹${fmt(ctx.parsed.y || 0)}`,
         },
       },
     },
@@ -249,25 +246,55 @@ export default function SWPCalculator() {
             {/* Summary */}
             <div className="border border-gray-200 dark:border-gray-700 p-4 rounded bg-white dark:bg-gray-800 text-sm">
               <h3 className="text-lg font-semibold mb-2">Summary</h3>
-              <SummaryCard label="Initial Investment" value={`₹${fmt(result.investment)}`} />
-              <SummaryCard label="First SWP" value={`₹${fmt(result.firstSWP)}`} />
-              <SummaryCard label={`Last SWP (infl. ${inflation} %)`} value={`₹${fmt(result.lastSWP)}`} />
+              <SummaryCard
+                label="Initial Investment"
+                value={`₹${fmt(result.investment)}`}
+              />
+              <SummaryCard
+                label="First SWP"
+                value={`₹${fmt(result.firstSWP)}`}
+              />
+              <SummaryCard
+                label={`Last SWP (infl. ${inflation} %)`}
+                value={`₹${fmt(result.lastSWP)}`}
+              />
               <SummaryCard label="Duration" value={`${result.duration} Yrs.`} />
               <SummaryCard label="Rate of Return" value={`${ror}%`} />
-              <SummaryCard label="Total Withdrawal" value={`₹${fmt(result.totalWithdrawal)}`} />
-              <SummaryCard label="Profit" value={`₹${fmt(result.profit)}`} highlight />
-              <SummaryCard label="Corpus Should Last For" value={`${result.duration} Years (${result.corpusEndYear})`} />
-              <SummaryCard label="Cl. Balance" value={`₹${fmt(result.closingBalance)}`} />
+              <SummaryCard
+                label="Total Withdrawal"
+                value={`₹${fmt(result.totalWithdrawal)}`}
+              />
+              <SummaryCard
+                label="Profit"
+                value={`₹${fmt(result.profit)}`}
+                highlight
+              />
+              <SummaryCard
+                label="Corpus Should Last For"
+                value={`${result.duration} Years (${result.corpusEndYear})`}
+              />
+              <SummaryCard
+                label="Cl. Balance"
+                value={`₹${fmt(result.closingBalance)}`}
+              />
               <div className="mt-4">
                 <h4 className="font-semibold mb-1">Taxes on Capital Gains</h4>
-                <SummaryCard label="Taxes During SWP" value={`₹${fmt(result.taxSWP)}`} />
-                <SummaryCard label="Tax on Final Redemption" value={`₹${fmt(result.taxRedemption)}`} />
+                <SummaryCard
+                  label="Taxes During SWP"
+                  value={`₹${fmt(result.taxSWP)}`}
+                />
+                <SummaryCard
+                  label="Tax on Final Redemption"
+                  value={`₹${fmt(result.taxRedemption)}`}
+                />
               </div>
             </div>
 
             {/* Pie Chart */}
             <div className="border border-gray-200 dark:border-gray-700 p-4 rounded bg-white dark:bg-gray-800">
-              <h3 className="text-lg font-semibold mb-4">Investment vs Profit</h3>
+              <h3 className="text-lg font-semibold mb-4">
+                Investment vs Profit
+              </h3>
               <Pie
                 data={{
                   labels: ["Investment Value", "Profit"],
@@ -295,21 +322,45 @@ export default function SWPCalculator() {
             <table className="min-w-full text-sm text-left mt-2">
               <thead className="bg-gray-100 dark:bg-gray-700">
                 <tr>
-                  {["Year", "Opening Balance", "Growth", "Withdrawal", "SWP (inflated)", "TAX", "Closing Balance"].map((head, i) => (
-                    <th key={i} className="px-4 py-2 text-right first:text-left">{head}</th>
+                  {[
+                    "Year",
+                    "Opening Balance",
+                    "Growth",
+                    "Withdrawal",
+                    "SWP (inflated)",
+                    "TAX",
+                    "Closing Balance",
+                  ].map((head, i) => (
+                    <th
+                      key={i}
+                      className="px-4 py-2 text-right first:text-left"
+                    >
+                      {head}
+                    </th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {growthTable.map((row, i) => (
-                  <tr key={i} className="border-b border-gray-200 dark:border-gray-700">
+                  <tr
+                    key={i}
+                    className="border-b border-gray-200 dark:border-gray-700"
+                  >
                     <td className="px-4 py-2">{row.year}</td>
-                    <td className="px-4 py-2 text-right">₹{fmt(row.opening)}</td>
+                    <td className="px-4 py-2 text-right">
+                      ₹{fmt(row.opening)}
+                    </td>
                     <td className="px-4 py-2 text-right">{fmt(row.growth)}</td>
-                    <td className="px-4 py-2 text-right">₹{fmt(row.Withdrawal)}</td>
-                    <td className="px-4 py-2 text-right">₹{fmt(row.SWPInflation)}</td>
+                    <td className="px-4 py-2 text-right">
+                      ₹{fmt(row.Withdrawal)}
+                    </td>
+                    <td className="px-4 py-2 text-right">
+                      ₹{fmt(row.SWPInflation)}
+                    </td>
                     <td className="px-4 py-2 text-right">₹{fmt(row.TAX)}</td>
-                    <td className="px-4 py-2 text-right font-semibold">₹{fmt(row.closing)}</td>
+                    <td className="px-4 py-2 text-right font-semibold">
+                      ₹{fmt(row.closing)}
+                    </td>
                   </tr>
                 ))}
               </tbody>

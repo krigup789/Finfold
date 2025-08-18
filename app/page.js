@@ -2,11 +2,7 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
-import {
-  featuresData,
-  howItWorksData,
-  testimonialsData,
-} from "@/data/landing";
+import { featuresData, howItWorksData, testimonialsData } from "@/data/landing";
 import HeroSection from "@/components/hero";
 import Link from "next/link";
 
@@ -102,7 +98,8 @@ const LandingPage = () => {
             Ready to Take Control of Your Finances?
           </h2>
           <p className="text-lg text-white/80 mb-8 max-w-2xl mx-auto">
-            Join thousands of users who are already managing their finances smarter with Finfold.
+            Join thousands of users who are already managing their finances
+            smarter with Finfold.
           </p>
           <Link href="/dashboard">
             <Button
