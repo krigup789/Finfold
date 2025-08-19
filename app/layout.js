@@ -18,8 +18,12 @@ export default function RootLayout({ children }) {
     <ClerkProvider>
       <html lang="en" suppressHydrationWarning>
         <head>
-          <link rel="icon" href="/favicon-dark.png" />
+          <link rel="icon" type="image/png" sizes="32x32" href="/favicon-dark.png" />
+
+          <link rel="icon" type="image/png" sizes="192x192" href="/logo.png" /> 
+          {/* for android */}
         </head>
+
         <body
           className={`font-sans ${inter.variable} bg-background text-foreground antialiased`}
         >

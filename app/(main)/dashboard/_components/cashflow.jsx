@@ -13,10 +13,7 @@ import {
 import { toast } from "sonner";
 
 export function CashFlowCard({ income, expense, invested, net }) {
-  const {
-    data: updatedCashFlow,
-    error,
-  } = useFetch(updateCashFlow);
+  const { data: updatedCashFlow, error } = useFetch(updateCashFlow);
 
   useEffect(() => {
     if (updatedCashFlow?.success) {
@@ -30,7 +27,6 @@ export function CashFlowCard({ income, expense, invested, net }) {
     }
   }, [error]);
 
-  // ✅ Currency formatter for INR
   const formatINR = (value) =>
     new Intl.NumberFormat("en-IN", {
       style: "currency",
@@ -41,35 +37,45 @@ export function CashFlowCard({ income, expense, invested, net }) {
   return (
     <Card className="rounded-2xl border bg-card shadow-sm hover:shadow-md transition-all duration-300">
       <CardHeader>
-        <CardTitle className="text-4xl font-semibold">Cash Flow</CardTitle>
+        <CardTitle className="text-2xl sm:text-3xl md:text-4xl font-semibold">
+          Cash Flow
+        </CardTitle>
       </CardHeader>
 
       <CardContent className="pt-0 pb-4">
-        <ul className="mt-4 space-y-6 text-foreground text-sm">
-          <li className="flex items-center justify-between">
-            <span className="text-3xl text-muted-foreground">Incoming</span>
-            <span className="text-3xl font-semibold text-green-600">
+        <ul className="mt-4 space-y-4 sm:space-y-6 text-foreground text-sm sm:text-base">
+          <li className="flex justify-between items-center">
+            <span className="text-xl sm:text-2xl md:text-3xl text-muted-foreground">
+              Incoming
+            </span>
+            <span className="text-xl sm:text-2xl md:text-3xl font-semibold text-green-600">
               {income != null ? formatINR(income) : "No Income"}
             </span>
           </li>
-          <li className="flex items-center justify-between">
-            <span className="text-3xl text-muted-foreground">Outgoing</span>
-            <span className="text-3xl font-semibold text-red-500">
+          <li className="flex justify-between items-center">
+            <span className="text-xl sm:text-2xl md:text-3xl text-muted-foreground">
+              Outgoing
+            </span>
+            <span className="text-xl sm:text-2xl md:text-3xl font-semibold text-red-500">
               {expense != null ? formatINR(expense) : "No Expense"}
             </span>
           </li>
-          <li className="flex items-center justify-between">
-            <span className="text-3xl text-muted-foreground">Invested</span>
-            <span className="text-3xl font-semibold text-blue-600">
+          <li className="flex justify-between items-center">
+            <span className="text-xl sm:text-2xl md:text-3xl text-muted-foreground">
+              Invested
+            </span>
+            <span className="text-xl sm:text-2xl md:text-3xl font-semibold text-blue-600">
               {invested != null ? formatINR(invested) : "No Investment"}
             </span>
           </li>
         </ul>
       </CardContent>
 
-      <CardFooter className="flex items-center justify-between border-t pt-3">
-        <div className="text-3xl font-semibold">Net Cash Flow :</div>
-        <div className="text-3xl font-semibold flex items-center gap-1">
+      <CardFooter className="flex justify-between items-center border-t pt-3">
+        <div className="text-xl sm:text-2xl md:text-3xl font-semibold">
+          Net Cash Flow :
+        </div>
+        <div className="text-xl sm:text-2xl md:text-3xl font-semibold flex items-center gap-1">
           {net != null ? formatINR(net) : "N/A"}
         </div>
       </CardFooter>
