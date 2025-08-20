@@ -78,6 +78,14 @@ export function AccountChart({ transactions }) {
     );
   }, [filteredData]);
 
+    // ✅ Currency formatter for INR
+  const formatINR = (value) =>
+    new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency: "INR",
+      maximumFractionDigits: 2,
+    }).format(value);
+
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-5">
@@ -99,32 +107,35 @@ export function AccountChart({ transactions }) {
       </CardHeader>
 
       <CardContent>
-        <div className="flex justify-around mb-6 text-sm">
-          <div className="text-center">
-            <p className="text-muted-foreground">Total Deposit</p>
-            <p className="text-lg font-bold text-green-500">
-              ₹{totals.income.toFixed(2)}
+        <div className="flex flex-col gap-4 mb-6 text-sm w-full">
+          <div className="flex flex-col">
+            <p className="text-muted-foreground">T</p>
+            <p className="text-lg font-bold text-green-500 break-words">
+              ₹{formatINR(totals.income)}
             </p>
           </div>
-          <div className="text-center">
+
+          <div className="flex flex-col">
             <p className="text-muted-foreground">Total Withdraw</p>
-            <p className="text-lg font-bold text-red-500">
-              ₹{totals.expense.toFixed(2)}
+            <p className="text-lg font-bold text-red-500 break-words">
+              ₹{formatINR(totals.expense)}
             </p>
           </div>
-          <div className="text-center">
+
+          <div className="flex flex-col">
             <p className="text-muted-foreground">Net</p>
             <p
-              className={`text-lg font-bold {
+              className={`text-lg font-bold break-words ${
                 totals.income - totals.expense >= 0
                   ? "text-green-500"
                   : "text-red-500"
               }`}
             >
-              ₹{(totals.income - totals.expense).toFixed(2)}
+              ₹{formatINR((totals.income - totals.expense).toFixed(2))}
             </p>
           </div>
         </div>
+
 
         <div className="h-[300px]">
           <ResponsiveContainer width="100%" height="100%">
@@ -157,7 +168,7 @@ export function AccountChart({ transactions }) {
                 type="monotone"
                 dataKey="income"
                 stroke="#22c55e"
-                fill="#22c55e"
+                fill="green"
                 fillOpacity={0.2}
                 name="Deposit"
               />
@@ -165,7 +176,7 @@ export function AccountChart({ transactions }) {
                 type="monotone"
                 dataKey="expense"
                 stroke="#ef4444"
-                fill="#ef4444"
+                fill="red"
                 fillOpacity={0.2}
                 name="Withdraw"
               />

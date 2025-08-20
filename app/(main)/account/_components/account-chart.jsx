@@ -85,35 +85,50 @@ export function AccountChart({ transactions }) {
         <CardTitle className="text-base font-normal">
           Transaction Overview
         </CardTitle>
-        <Select defaultValue={dateRange} onValueChange={setDateRange}>
-          <SelectTrigger className="w-[140px]">
-            <SelectValue placeholder="Select range" />
-          </SelectTrigger>
-          <SelectContent>
-            {Object.entries(DATE_RANGES).map(([key, { label }]) => (
-              <SelectItem key={key} value={key}>
-                {label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+          <Select defaultValue={dateRange} onValueChange={setDateRange}>
+            <SelectTrigger
+              className="w-[140px] border border-border bg-background text-foreground 
+                        placeholder:text-muted-foreground rounded-md px-3 py-2 
+                        focus:ring-2 focus:ring-ring"
+            >
+              <SelectValue placeholder="Select range" />
+            </SelectTrigger>
+
+            <SelectContent className="bg-background text-foreground border border-border rounded-md shadow-md">
+              {Object.entries(DATE_RANGES).map(([key, { label }]) => (
+                <SelectItem
+                  key={key}
+                  value={key}
+                  className="hover:bg-accent hover:text-accent-foreground cursor-pointer"
+                >
+                  {label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
       </CardHeader>
 
       <CardContent>
-        <div className="flex justify-around mb-6 text-sm">
-          <div className="text-center">
+        <div className="flex flex-col gap-4 mb-6 text-sm md:flex-row md:justify-around">
+          {/* Total Deposit */}
+          <div className="text-center md:text-left">
             <p className="text-muted-foreground">Total Deposit</p>
             <p className="text-lg font-bold text-green-500">
               ₹{totals.income.toFixed(2)}
             </p>
           </div>
-          <div className="text-center">
+
+          {/* Total Withdraw */}
+          <div className="text-center md:text-left">
             <p className="text-muted-foreground">Total Withdraw</p>
             <p className="text-lg font-bold text-red-500">
               ₹{totals.expense.toFixed(2)}
             </p>
           </div>
-          <div className="text-center">
+
+          {/* Net */}
+          <div className="text-center md:text-left">
             <p className="text-muted-foreground">Net</p>
             <p
               className={`text-lg font-bold ${
@@ -126,6 +141,7 @@ export function AccountChart({ transactions }) {
             </p>
           </div>
         </div>
+
 
         <div className="h-[300px]">
           <ResponsiveContainer width="100%" height="100%">
@@ -160,12 +176,14 @@ export function AccountChart({ transactions }) {
                 name="Deposit"
                 fill="#22c55e"
                 radius={[4, 4, 0, 0]}
+                activeBar={false}
               />
               <Bar
                 dataKey="expense"
                 name="Withdraw"
                 fill="#ef4444"
                 radius={[4, 4, 0, 0]}
+                activeBar={false}
               />
             </BarChart>
           </ResponsiveContainer>

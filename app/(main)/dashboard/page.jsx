@@ -3,15 +3,11 @@ import { Suspense } from "react";
 import { getUserAccounts, getDashboardData } from "@/actions/dashboard";
 import { getCurrentBudget } from "@/actions/budget";
 import { getCashFlow } from "@/actions/cashflow";
-
-import { AccountCard } from "./_components/account-card";
-import { CreateAccountDrawer } from "@/components/create-account-drawer";
 import { BudgetProgress } from "./_components/budget-progress";
 import { DashboardOverview } from "./_components/transaction-overview";
 import NetWorth from "./_components/net-worth";
 import { CashFlowCard } from "./_components/cashflow";
-import { Card, CardContent } from "@/components/ui/card";
-import { Plus } from "lucide-react";
+import { AccountsGrid } from "./_components/accounts-grid";
 
 // ----------------------
 // Budget Section Wrapper
@@ -116,25 +112,8 @@ export default async function DashboardPage() {
       </Suspense>
 
       {/* Investment Accounts Grid */}
-      <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-3 sm:px-2">
-        {/* Add New Investment Card */}
-        <CreateAccountDrawer>
-          <Card className="w-full min-h-[200px] sm:min-h-[220px] border-dashed hover:shadow-md cursor-pointer bg-card text-muted-foreground transition-shadow">
-            <CardContent className="flex flex-col items-center justify-center h-full pt-5 sm:pt-4 sm:px-2">
-              <Plus className="h-10 w-10 mb-2" />
-              <p className="text-sm font-medium sm:text-xs">
-                Add New Investment
-              </p>
-            </CardContent>
-          </Card>
-        </CreateAccountDrawer>
+      <AccountsGrid initialAccounts={accounts} />
 
-        {/* Account Cards */}
-        {accounts.length > 0 &&
-          accounts.map((account) => (
-            <AccountCard key={account.id} account={account} />
-          ))}
-      </div>
 
     </div>
   );

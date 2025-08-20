@@ -40,7 +40,7 @@ export async function createTransaction(data) {
           },
         });
 
-        throw new Error("Too many requests. Please try again later.");
+        throw new Error("requests. Please try again later.");
       }
 
       throw new Error("Request blocked");

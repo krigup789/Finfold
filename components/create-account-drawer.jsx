@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
@@ -28,8 +29,10 @@ import { Switch } from "@/components/ui/switch";
 import { createAccount } from "@/actions/dashboard";
 import { accountSchema } from "@/app/lib/schema";
 
-export function CreateAccountDrawer({ children }) {
+export function CreateAccountDrawer({ children, onCreate }) {
   const [open, setOpen] = useState(false);
+  const router = useRouter();
+
   const {
     register,
     handleSubmit,
@@ -52,23 +55,35 @@ export function CreateAccountDrawer({ children }) {
     fn: createAccountFn,
     error,
     data: newAccount,
+    setData, // 👈 add this
   } = useFetch(createAccount);
+
 
   const onSubmit = async (data) => {
     await createAccountFn(data);
   };
 
-  useEffect(() => {
-    if (newAccount) {
-      toast.success("Investment created successfully");
-      reset();
-      setOpen(false);
-    }
-  }, [newAccount, reset]);
+useEffect(() => {
+  if (newAccount?.success) {
+    toast.success("Investment created successfully");
+    reset();
+    setOpen(false);
+
+    // Optimistic update
+    onCreate?.(newAccount.data);
+
+    // Keep server data consistent too
+    router.refresh();
+
+    // 👇 Clear fetch state so next create works fine
+    setData(null);
+  }
+}, [newAccount, reset, router, onCreate, setData]);
+
 
   useEffect(() => {
     if (error) {
-      toast.error(error.message || "Failed to investment account");
+      toast.error(error.message || "Failed to create investment account");
     }
   }, [error]);
 
@@ -82,10 +97,7 @@ export function CreateAccountDrawer({ children }) {
         <div className="px-4 pb-4">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="space-y-2">
-              <label
-                htmlFor="name"
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-              >
+              <label htmlFor="name" className="text-sm font-medium">
                 Investment Name
               </label>
               <Input
@@ -99,40 +111,54 @@ export function CreateAccountDrawer({ children }) {
             </div>
 
             <div className="space-y-2">
-              <label
-                htmlFor="type"
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-              >
+              <label htmlFor="type" className="text-sm font-medium">
                 Investment Type
               </label>
-              <Select
-                onValueChange={(value) => setValue("type", value)}
-                defaultValue={watch("type")}
-              >
-                <SelectTrigger id="type">
+              <Select onValueChange={(value) => setValue("type", value)} defaultValue={watch("type")}>
+                <SelectTrigger
+                  id="type"
+                  className="w-full border border-border bg-background text-foreground 
+                            placeholder:text-muted-foreground rounded-md px-3 py-2 
+                            focus:ring-2 focus:ring-ring"
+                >
                   <SelectValue placeholder="Select type" />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="BANK">Bank</SelectItem>
-                  <SelectItem value="STOCK">Stocks</SelectItem>
-                  <SelectItem value="MUTUAL_FUND">Mutual Funds</SelectItem>
-                  <SelectItem value="FD">Fixed Deposit</SelectItem>
-                  <SelectItem value="CRYPTO">Crypto Currency</SelectItem>
-                  <SelectItem value="GOLD">Gold</SelectItem>
-                  <SelectItem value="REAL_ESTATE">Real Estate</SelectItem>
-                  <SelectItem value="OTHER">Others</SelectItem>
+
+                <SelectContent className="bg-background text-foreground border border-border rounded-md shadow-md">
+                  <SelectItem value="BANK" className="hover:bg-accent hover:text-accent-foreground cursor-pointer">
+                    Bank
+                  </SelectItem>
+                  <SelectItem value="STOCK" className="hover:bg-accent hover:text-accent-foreground cursor-pointer">
+                    Stocks
+                  </SelectItem>
+                  <SelectItem value="MUTUAL_FUND" className="hover:bg-accent hover:text-accent-foreground cursor-pointer">
+                    Mutual Funds
+                  </SelectItem>
+                  <SelectItem value="FD" className="hover:bg-accent hover:text-accent-foreground cursor-pointer">
+                    Fixed Deposit
+                  </SelectItem>
+                  <SelectItem value="CRYPTO" className="hover:bg-accent hover:text-accent-foreground cursor-pointer">
+                    Crypto Currency
+                  </SelectItem>
+                  <SelectItem value="GOLD" className="hover:bg-accent hover:text-accent-foreground cursor-pointer">
+                    Gold
+                  </SelectItem>
+                  <SelectItem value="REAL_ESTATE" className="hover:bg-accent hover:text-accent-foreground cursor-pointer">
+                    Real Estate
+                  </SelectItem>
+                  <SelectItem value="OTHER" className="hover:bg-accent hover:text-accent-foreground cursor-pointer">
+                    Others
+                  </SelectItem>
                 </SelectContent>
               </Select>
+
               {errors.type && (
                 <p className="text-sm text-red-500">{errors.type.message}</p>
               )}
             </div>
 
             <div className="space-y-2">
-              <label
-                htmlFor="balance"
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-              >
+              <label htmlFor="balance" className="text-sm font-medium">
                 Initial Amount
               </label>
               <Input
