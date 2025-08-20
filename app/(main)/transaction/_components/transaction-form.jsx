@@ -36,6 +36,7 @@ export function AddTransactionForm({
   categories,
   editMode = false,
   initialData = null,
+  onTransactionAdded,
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -116,9 +117,16 @@ export function AddTransactionForm({
           : "Transaction created successfully"
       );
       reset();
+
+      // Notify parent
+      if (!editMode && onTransactionAdded) {
+        onTransactionAdded(transactionResult.data);
+      }
+
       router.push(`/account/${transactionResult.data.accountId}`);
     }
-  }, [transactionResult, transactionLoading, editMode,reset, router]);
+  }, [transactionResult, transactionLoading, editMode, onTransactionAdded, reset, router]);
+
 
   const type = watch("type");
   const isRecurring = watch("isRecurring");
@@ -139,10 +147,7 @@ export function AddTransactionForm({
         <label className="text-sm font-medium text-foreground">Type</label>
 
         {/* Select */}
-        <Select
-          onValueChange={(value) => setValue("type", value)}
-          defaultValue={type}
-        >
+        <Select onValueChange={(value) => setValue("type", value)} defaultValue={type}>
           <SelectTrigger
             className="w-full border border-border bg-background text-foreground 
                       placeholder:text-muted-foreground focus:ring-2 
@@ -172,6 +177,7 @@ export function AddTransactionForm({
           <p className="text-sm text-destructive">{errors.type.message}</p>
         )}
       </div>
+
 
       {/* Amount and Account */}
       <div className="grid gap-6 md:grid-cols-2">
@@ -235,11 +241,11 @@ export function AddTransactionForm({
 
           {/* Error */}
           {errors.accountId && (
-            <p className="text-sm text-destructive">
-              {errors.accountId.message}
-            </p>
+            <p className="text-sm text-destructive">{errors.accountId.message}</p>
           )}
         </div>
+
+
       </div>
 
       {/* Category */}
@@ -279,6 +285,7 @@ export function AddTransactionForm({
           <p className="text-sm text-destructive">{errors.category.message}</p>
         )}
       </div>
+
 
       {/* Date */}
       <div className="space-y-2">

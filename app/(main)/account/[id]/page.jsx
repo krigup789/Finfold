@@ -5,6 +5,14 @@ import { TransactionTable } from "../_components/transaction-table";
 import { notFound } from "next/navigation";
 import { AccountChart } from "../_components/account-chart";
 
+// ✅ Currency formatter for INR
+const formatINR = (value) =>
+  new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+    maximumFractionDigits: 2,
+  }).format(value);
+
 export default async function AccountPage({ params }) {
   // ✅ Fix: Await params before using id
   const { id } = await params;
@@ -32,7 +40,7 @@ export default async function AccountPage({ params }) {
 
         <div className="text-right pb-2">
           <div className="text-xl sm:text-2xl font-bold">
-            ${parseFloat(account.balance).toFixed(2)}
+            {formatINR(parseFloat(account.balance))}
           </div>
           <p className="text-sm text-muted-foreground">
             {account._count.transactions} Transactions

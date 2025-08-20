@@ -242,7 +242,7 @@ export default function SWPCalculator() {
       {/* Results */}
       {showResult && result && (
         <>
-          <div className="mt-10 grid md:grid-cols-2 gap-4">
+          <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Summary */}
             <div className="border border-gray-200 dark:border-gray-700 p-4 rounded bg-white dark:bg-gray-800 text-sm">
               <h3 className="text-lg font-semibold mb-2">Summary</h3>
@@ -255,7 +255,7 @@ export default function SWPCalculator() {
                 value={`₹${fmt(result.firstSWP)}`}
               />
               <SummaryCard
-                label={`Last SWP (infl. ${inflation} %)`}
+                label={`Last SWP (infl. ${inflation} %)`} 
                 value={`₹${fmt(result.lastSWP)}`}
               />
               <SummaryCard label="Duration" value={`${result.duration} Yrs.`} />
@@ -291,30 +291,37 @@ export default function SWPCalculator() {
             </div>
 
             {/* Pie Chart */}
-            <div className="border border-gray-200 dark:border-gray-700 p-4 rounded bg-white dark:bg-gray-800">
-              <h3 className="text-lg font-semibold mb-4">
+            <div className="border border-gray-200 dark:border-gray-700 p-4 rounded bg-white dark:bg-gray-800 flex flex-col items-center">
+              <h3 className="text-lg font-semibold mb-4 text-center">
                 Investment vs Profit
               </h3>
-              <Pie
-                data={{
-                  labels: ["Investment Value", "Profit"],
-                  datasets: [
-                    {
-                      data: [result.investment, result.profit],
-                      backgroundColor: ["#4B0082", "#228B22"],
-                      hoverBackgroundColor: ["#3A006B", "#1E7A1E"],
-                      hoverOffset: 4,
+              <div className="w-[250px] h-[250px] sm:w-[300px] sm:h-[300px]">
+                <Pie
+                  data={{
+                    labels: ["Investment Value", "Profit"],
+                    datasets: [
+                      {
+                        data: [result.investment, result.profit],
+                        backgroundColor: ["#4B0082", "#228B22"],
+                        hoverBackgroundColor: ["#3A006B", "#1E7A1E"],
+                        hoverOffset: 4,
+                      },
+                    ],
+                  }}
+                  options={{
+                    maintainAspectRatio: false, // makes chart responsive
+                    plugins: {
+                      legend: { 
+                        labels: { color: labelColor, font: { size: 12 } }, 
+                        position: "bottom" // better on mobile
+                      },
                     },
-                  ],
-                }}
-                options={{
-                  plugins: {
-                    legend: { labels: { color: labelColor } },
-                  },
-                }}
-              />
+                  }}
+                />
+              </div>
             </div>
           </div>
+
 
           {/* Growth Table */}
           <div className="mt-8 border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-800 shadow-sm overflow-auto">
