@@ -354,14 +354,19 @@ export default function WealthCalculator() {
       {/* Result Section */}
       {showResult && (
         <>
-          <div className="mt-10 grid md:grid-cols-2 gap-4">
-            {/* Summary Card */}
-            <div className="border p-4 rounded shadow-sm bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-center">
-              <h3 className="text-lg font-semibold mb-4">Summary</h3>
-              <SummaryCard label="Investment" value={`${formatINR(result.investment)}`} />
+          <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="border border-gray-200 dark:border-gray-700 p-4 rounded bg-white dark:bg-gray-800 text-sm">
+              <h3 className="text-lg font-semibold mb-2">Summary</h3>
+              <SummaryCard
+                label="Investment"
+                value={`${formatINR(result.investment)}`}
+              />
               <SummaryCard label="Duration" value={`${result.duration} Yrs.`} />
               <SummaryCard label="ROG" value={`${result.rog}%`} />
-              <SummaryCard label="Growth" value={`${formatINR(result.growth)}`} />
+              <SummaryCard
+                label="Growth"
+                value={`${formatINR(result.growth)}`}
+              />
               <SummaryCard
                 label="Return*"
                 value={`${formatINR(result.returnAmount)}`}
@@ -369,39 +374,38 @@ export default function WealthCalculator() {
               />
             </div>
 
-            {/* Chart Card */}
-            <div className="border p-4 rounded shadow-sm bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 flex flex-col items-center">
+            <div className="border border-gray-200 dark:border-gray-700 p-4 rounded bg-white dark:bg-gray-800 flex flex-col items-center">
               <h3 className="text-lg font-semibold mb-4 text-center">
                 Investment vs Growth
               </h3>
-              <div className="w-full max-w-[280px]"> {/* ✅ keeps chart centered */}
-                <Pie
-                  data={{
-                    labels: ["Investment", "Growth"],
-                    datasets: [
-                      {
-                        data: [result.investment, result.growth],
-                        backgroundColor: ["#4B0082", "#228B22"],
-                        hoverBackgroundColor: ["#3A006B", "#1E7A1E"],
-                        hoverOffset: 4,
-                      },
-                    ],
-                  }}
-                  options={{
-                    plugins: {
-                      legend: {
-                        labels: {
-                          color: labelColor, // ✅ legend adapts to theme
-                        },
-                        position: "bottom", // ✅ looks better on mobile
+              <Pie
+                data={{
+                  labels: ["Investment", "Growth"],
+                  datasets: [
+                    {
+                      data: [result.investment, result.growth],
+                      backgroundColor: ["#4B0082", "#228B22"],
+                      hoverBackgroundColor: ["#3A006B", "#1E7A1E"],
+                      hoverOffset: 4,
+                    },
+                  ],
+                }}
+                options={{
+                  plugins: {
+                    legend: {
+                      labels: {
+                        color: labelColor, // ✅ legend adapts to theme
                       },
                     },
-                  }}
-                />
-              </div>
+                    // tooltip: {
+                    //   titleColor: labelColor, // ✅ tooltip title adapts
+                    //   bodyColor: labelColor,  // ✅ tooltip text adapts
+                    // },
+                  },
+                }}
+              />
             </div>
           </div>
-
 
           {/* Growth Table */}
           <div className="mt-8 border rounded bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 overflow-auto">
