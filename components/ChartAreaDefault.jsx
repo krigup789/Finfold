@@ -48,7 +48,7 @@ const formatINR = (value) =>
   new Intl.NumberFormat("en-IN", {
     style: "currency",
     currency: "INR",
-    maximumFractionDigits: 2,
+    maximumFractionDigits: 0,
   }).format(value);
 
 export function ChartAreaDefault({ accounts }) {
@@ -77,6 +77,7 @@ export function ChartAreaDefault({ accounts }) {
       current = addMonths(current, 1);
     }
 
+    // Start at zero, build net worth only from account balances
     let runningTotal = 0;
 
     return months.map((monthKey) => {
@@ -86,21 +87,10 @@ export function ChartAreaDefault({ accounts }) {
       accounts.forEach((account) => {
         const accountCreatedAt = new Date(account.createdAt);
 
-        // Add initial balance once on account creation
-        if (accountCreatedAt >= monthStart && accountCreatedAt < monthEnd) {
+        // Include account balance only if account exists in this month
+        if (accountCreatedAt <= monthEnd) {
           runningTotal += parseFloat(account.balance || 0);
         }
-
-        // Apply transactions
-        account.transactions?.forEach((txn) => {
-          const txnDate = new Date(txn.date);
-          if (txnDate >= monthStart && txnDate < monthEnd) {
-            runningTotal +=
-              txn.type === "DEPOSIT"
-                ? parseFloat(txn.amount)
-                : -parseFloat(txn.amount);
-          }
-        });
       });
 
       return {

@@ -136,3 +136,17 @@ body {
   background-size: 200% 200%;
   animation: gradientMove 3s ease infinite;
 }
+
+/* Fix Recharts Pie focus rectangle */
+.recharts-pie-sector:focus {
+  outline: none !important;
+}
+
+/* globals.css */
+.recharts-wrapper [tabindex]:focus,
+.recharts-wrapper .recharts-sector:focus,
+.recharts-wrapper .recharts-pie-sector:focus,
+.recharts-wrapper .recharts-layer:focus {
+  outline: none !important;
+}
+

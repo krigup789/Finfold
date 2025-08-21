@@ -7,7 +7,6 @@ import {
   Cell,
   ResponsiveContainer,
   Tooltip,
-  Legend,
 } from "recharts";
 import { format } from "date-fns";
 import { ArrowUpRight, ArrowDownRight } from "lucide-react";
@@ -22,20 +21,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
-// Custom tooltip component using Tailwind classes
-const CustomTooltip = ({ active, payload, label }) => {
-  if (!active || !payload || !payload.length) return null;
 
-  return (
-    <div
-      className="rounded-md border px-3 py-2 text-sm shadow-md 
-                bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100"
-    >
-      <p className="font-medium">{label}</p>
-      <p>₹{payload[0].value.toFixed(2)} Spent</p>
-    </div>
-  );
-};
 
 const COLORS = [
   "#FF6B6B",
@@ -182,8 +168,9 @@ export function DashboardOverview({ accounts, transactions }) {
       </Card>
 
       {/* ✅ Monthly Expense Breakdown */}
+      {/* ✅ Monthly Expense Breakdown */}
       <Card className="rounded-2xl border bg-background shadow-sm hover:shadow-md transition-all duration-300">
-        <CardHeader className="pb-4">
+        <CardHeader className="pb-4 text-center">
           <CardTitle className="text-sm font-semibold text-foreground">
             Monthly Expense Breakdown
           </CardTitle>
@@ -195,44 +182,62 @@ export function DashboardOverview({ accounts, transactions }) {
               No expenses this month
             </p>
           ) : (
-            <div className="h-[300px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={pieChartData}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={70} // hollow center
-                    outerRadius={120} // larger overall pie
-                    dataKey="value"
-                    labelLine={false}
-                    label={({ name, value }) =>
-                      `${name}: ${formatINR(value.toFixed(0))}`
-                    }
-                  >
-                    {pieChartData.map((_, index) => (
-                      <Cell
-                        key={`cell-${index}`}
-                        fill={COLORS[index % COLORS.length]}
-                      />
-                    ))}
-                  </Pie>
+            <div className="flex flex-col items-center">
+              {/* Chart Container */}
+              <div className="h-[250px] w-full sm:h-[300px] flex justify-center">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={pieChartData}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={60}
+                      outerRadius="80%" // ✅ responsive size
+                      dataKey="value"
+                      labelLine={false}
+                      activeShape={null} // ✅ disable grey/white highlight box
+                    >
+                      {pieChartData.map((_, index) => (
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={COLORS[index % COLORS.length]}
+                        />
+                      ))}
+                    </Pie>
 
-                  <Tooltip content={<CustomTooltip />} />
+                    <Tooltip
+                      content={({ active, payload }) => {
+                        if (active && payload && payload.length) {
+                          return (
+                            <div className="bg-background border rounded-lg shadow-md px-3 py-2 text-xs">
+                              <p className="font-medium">{payload[0].name}</p>
+                              <p className="text-muted-foreground">
+                                {formatINR(payload[0].value)}
+                              </p>
+                            </div>
+                          );
+                        }
+                        return null;
+                      }}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
 
-                  <Legend
-                    layout="horizontal"
-                    verticalAlign="bottom"
-                    align="center"
-                    iconType="circle"
-                    wrapperStyle={{
-                      fontSize: "12px",
-                      marginTop: "8px",
-                      color: "hsl(var(--muted-foreground))",
-                    }}
-                  />
-                </PieChart>
-              </ResponsiveContainer>
+              {/* ✅ Legend below chart */}
+              <div className="grid grid-cols-2 gap-2 mt-4 w-full">
+                {pieChartData.map((entry, index) => (
+                  <div key={`legend-${index}`} className="flex items-center gap-2">
+                    <div
+                      className="w-3 h-3 rounded-full"
+                      style={{ backgroundColor: COLORS[index % COLORS.length] }}
+                    />
+                    <span className="text-xs text-foreground truncate">
+                      {entry.name} ({formatINR(entry.value)})
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </CardContent>
