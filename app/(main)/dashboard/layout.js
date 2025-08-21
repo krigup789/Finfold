@@ -2,6 +2,7 @@ import DashboardPage from "./page";
 import { BarLoader } from "react-spinners";
 import { Suspense } from "react";
 import { currentUser } from "@clerk/nextjs/server"; // ✅ Server-safe import
+import Greeting from "@/components/Greeting";
 
 // Format date with day of the week
 function formatDateWithDay(date) {
@@ -34,15 +35,6 @@ function formatDateWithDay(date) {
   return `It's ${dayOfMonth} ${month}, A ${day}`;
 }
 
-// Personalized greeting based on current hour
-function getGreeting() {
-  const hour = new Date().getHours();
-  if (hour < 12) return "Good Morning kd";
-  if (hour < 16) return "Good Afternoon";
-  if (hour < 20) return "Good Evening";
-  return "Good Night"; 
-}
-
 export default async function Layout() {
   const user = await currentUser();
 
@@ -51,7 +43,7 @@ export default async function Layout() {
       <div className="mb-6">
         {/* Greeting */}
         <h1 className="text-base font-medium text-muted-foreground">
-          {getGreeting()}, {user?.firstName || "User"}
+          {<Greeting />}, {user?.firstName || "User"}
         </h1>
 
         {/* Formatted Date */}
