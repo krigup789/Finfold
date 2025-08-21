@@ -181,6 +181,9 @@ export function TransactionTable({ transactions }) {
   useEffect(() => {
     if (deleted && !deleteLoading) {
       toast.error("Transactions deleted successfully");
+
+          // ✅ Clear selectedIds after deletion
+          setSelectedIds([]);
     }
   }, [deleted, deleteLoading]);
 
@@ -223,10 +226,10 @@ export function TransactionTable({ transactions }) {
               setCurrentPage(1);
             }}
           >
-            <SelectTrigger className="w-[130px]">
+            <SelectTrigger className="w-[130px] bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700">
               <SelectValue placeholder="All Types" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700">
               <SelectItem value="DEPOSIT">Deposit</SelectItem>
               <SelectItem value="WITHDRAW">Withdraw</SelectItem>
             </SelectContent>
@@ -239,14 +242,15 @@ export function TransactionTable({ transactions }) {
               setCurrentPage(1);
             }}
           >
-            <SelectTrigger className="w-[130px]">
+            <SelectTrigger className="w-[160px] bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700">
               <SelectValue placeholder="All Transactions" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700">
               <SelectItem value="recurring">Recurring Only</SelectItem>
               <SelectItem value="non-recurring">Non-recurring Only</SelectItem>
             </SelectContent>
           </Select>
+
 
           {/* Bulk Actions */}
           {selectedIds.length > 0 && (
@@ -256,8 +260,8 @@ export function TransactionTable({ transactions }) {
                 size="sm"
                 onClick={handleBulkDelete}
               >
-                <Trash className="h-4 w-4 mr-2" />
-                Delete Selected ({selectedIds.length})
+                <Trash className="h-4 w-4" />
+                ({selectedIds.length})
               </Button>
             </div>
           )}
@@ -420,23 +424,28 @@ export function TransactionTable({ transactions }) {
                   <TableCell>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
+                        <Button
+                          variant="ghost"
+                          className="h-8 w-8 p-0 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full"
+                        >
                           <MoreHorizontal className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
+                      <DropdownMenuContent
+                        align="end"
+                        className="bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-md shadow-md"
+                      >
                         <DropdownMenuItem
                           onClick={() =>
-                            router.push(
-                              `/transaction/create?edit=${transaction.id}`
-                            )
+                            router.push(`/transaction/create?edit=${transaction.id}`)
                           }
+                          className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800"
                         >
                           Edit
                         </DropdownMenuItem>
-                        <DropdownMenuSeparator />
+                        <DropdownMenuSeparator className="bg-gray-200 dark:bg-gray-700" />
                         <DropdownMenuItem
-                          className="text-destructive"
+                          className="text-destructive cursor-pointer hover:bg-red-100 dark:hover:bg-red-900"
                           onClick={() => deleteFn([transaction.id])}
                         >
                           Delete
