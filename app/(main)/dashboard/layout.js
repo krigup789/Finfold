@@ -37,7 +37,7 @@ function formatDateWithDay(date) {
 // Personalized greeting based on current hour
 function getGreeting() {
   const hour = new Date().getHours();
-  if (hour < 12) return "Good Morning";
+  if (hour < 12) return "Good Morning kd";
   if (hour < 16) return "Good Afternoon";
   if (hour < 20) return "Good Evening";
   return "Good Night"; 
