@@ -289,13 +289,15 @@ export function AddTransactionForm({
 
       {/* Date */}
       <div className="space-y-2">
-        <label className="text-sm font-medium">Date</label>
+        {/* Label */}
+        <label className="text-sm font-medium text-foreground">Date</label>
+
         <Popover>
           <PopoverTrigger asChild>
             <Button
               variant="outline"
               className={cn(
-                "w-full pl-3 text-left font-normal",
+                "w-full pl-3 text-left font-normal border border-border bg-background text-foreground",
                 !date && "text-muted-foreground"
               )}
             >
@@ -303,7 +305,12 @@ export function AddTransactionForm({
               <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="start">
+
+          {/* Calendar Dropdown */}
+          <PopoverContent
+            className="w-auto p-0 bg-background text-foreground border border-border rounded-md shadow-md"
+            align="start"
+          >
             <Calendar
               mode="single"
               selected={date}
@@ -315,10 +322,13 @@ export function AddTransactionForm({
             />
           </PopoverContent>
         </Popover>
+
+        {/* Error message */}
         {errors.date && (
-          <p className="text-sm text-red-500">{errors.date.message}</p>
+          <p className="text-sm text-destructive">{errors.date.message}</p>
         )}
       </div>
+
 
       {/* Description */}
       <div className="space-y-2">

@@ -40,7 +40,7 @@ function getGreeting() {
   if (hour < 12) return "Good Morning";
   if (hour < 16) return "Good Afternoon";
   if (hour < 20) return "Good Evening";
-  return "Good Night";
+  return "Good Night"; 
 }
 
 export default async function Layout() {
