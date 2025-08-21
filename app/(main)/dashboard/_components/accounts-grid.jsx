@@ -14,15 +14,19 @@ export function AccountsGrid({ initialAccounts }) {
     setAccounts((prev) => prev.filter((acc) => acc.id !== accountId));
   };
 
-  // Add account after create
-  const addAccount = (account) => {
-    setAccounts((prev) => {
-      // avoid duplicates if account already exists
-      if (prev.some((acc) => acc.id === account.id)) {
-        return prev;
-      }
-      return [account, ...prev];
-    });
+  // Add new account after creation
+  const addAccount = (newAccount) => {
+    setAccounts((prev) => [newAccount, ...prev]); // add on top
+  };
+
+  // ✅ Handle default account change instantly
+  const handleDefaultChange = (defaultId) => {
+    setAccounts((prev) =>
+      prev.map((acc) => ({
+        ...acc,
+        isDefault: acc.id === defaultId, // only new default becomes true
+      }))
+    );
   };
 
   return (
@@ -46,6 +50,7 @@ export function AccountsGrid({ initialAccounts }) {
             key={account.id}
             account={account}
             onDelete={removeAccount}
+            onDefaultChange={handleDefaultChange} // updates UI immediately
           />
         ))}
     </div>

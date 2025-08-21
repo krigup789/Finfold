@@ -72,9 +72,6 @@ useEffect(() => {
     // Optimistic update
     onCreate?.(newAccount.data);
 
-    // Keep server data consistent too
-    router.refresh();
-
     // 👇 Clear fetch state so next create works fine
     setData(null);
   }

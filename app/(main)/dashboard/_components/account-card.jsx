@@ -2,7 +2,6 @@
 
 import { ArrowUpRight, ArrowDownRight, Trash } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
-import { useEffect } from "react";
 import useFetch from "@/hooks/use-fetch";
 import {
   Card,
@@ -16,40 +15,11 @@ import { updateDefaultAccount } from "@/actions/account";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 
-export function AccountCard({ account, onDelete }) {
+export function AccountCard({ account, onDelete, onDefaultChange }) {
   const { name, type, balance, id, isDefault } = account;
 
-  // fetch hook for updating default account
-  const {
-    loading: updateDefaultLoading,
-    fn: updateDefaultFn,
-    data: updatedAccount,
-    error,
-  } = useFetch(updateDefaultAccount);
-
-  // ----------------------
-  // Default Account Handler
-  // ----------------------
-  const handleDefaultChange = async (event) => {
-    event.preventDefault(); // prevent Link navigation
-    if (isDefault) {
-      toast.warning("You need at least 1 default account");
-      return;
-    }
-    await updateDefaultFn(id);
-  };
-
-  useEffect(() => {
-    if (updatedAccount?.success) {
-      toast.success("Default account updated successfully");
-    }
-  }, [updatedAccount]);
-
-  useEffect(() => {
-    if (error) {
-      toast.error(error.message || "Failed to update default account");
-    }
-  }, [error]);
+  const { loading: updateDefaultLoading, fn: updateDefaultFn } =
+    useFetch(updateDefaultAccount);
 
   // ----------------------
   // Delete Account Handler
@@ -71,7 +41,7 @@ export function AccountCard({ account, onDelete }) {
 
       if (data.success) {
         toast.success("Investment deleted successfully");
-        if (onDelete) onDelete(id); // ✅ notify parent to remove from state
+        onDelete?.(id); // notify parent to remove from state
       } else {
         toast.error(data.message || "Failed to delete investment");
       }
@@ -80,7 +50,9 @@ export function AccountCard({ account, onDelete }) {
     }
   };
 
-  // ✅ Currency formatter for INR
+  // ----------------------
+  // Currency formatter
+  // ----------------------
   const formatINR = (value) =>
     new Intl.NumberFormat("en-IN", {
       style: "currency",
@@ -95,14 +67,12 @@ export function AccountCard({ account, onDelete }) {
         href={`/account/${id}`}
         className="flex flex-col flex-1 p-4 sm:p-2"
       >
-        {/* Header */}
         <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
           <CardTitle className="text-xl sm:text-base font-bold capitalize">
             {name}
           </CardTitle>
         </CardHeader>
 
-        {/* Content */}
         <CardContent className="flex-1">
           <div className="text-2xl sm:text-xl font-bold">
             {formatINR(parseFloat(balance).toFixed(2))}
@@ -112,7 +82,6 @@ export function AccountCard({ account, onDelete }) {
           </p>
         </CardContent>
 
-        {/* Footer */}
         <CardFooter className="flex flex-wrap justify-between text-sm sm:text-xs text-muted-foreground mt-auto mb-0 pb-0">
           <div className="flex items-center">
             <ArrowUpRight className="h-4 w-4 mr-1 text-green-500" />
@@ -129,11 +98,30 @@ export function AccountCard({ account, onDelete }) {
       <div className="absolute top-4 right-4 flex items-center space-x-2">
         {/* Default switch */}
         <Switch
-          checked={isDefault}
-          onClick={handleDefaultChange}
+          checked={isDefault} // controlled by prop
+          onCheckedChange={async () => {
+            if (isDefault) {
+              toast.warning("You need at least 1 default account");
+              return;
+            }
+
+            // ✅ update parent state immediately
+            onDefaultChange?.(id);
+
+            // async backend update
+            try {
+              const result = await updateDefaultFn(id);
+              if (result?.success) {
+                toast.success("Default account updated successfully");
+              }
+            } catch (err) {
+              toast.error(err.message || "Failed to update default account");
+            }
+          }}
+          onClick={(e) => e.stopPropagation()} // prevent Link navigation
           disabled={updateDefaultLoading}
         />
-        
+
         {/* Delete button */}
         <Button
           variant="ghost"
@@ -144,7 +132,6 @@ export function AccountCard({ account, onDelete }) {
           <Trash className="h-4 w-4" />
         </Button>
       </div>
-
     </Card>
   );
 }
