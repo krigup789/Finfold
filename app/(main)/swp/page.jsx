@@ -3,7 +3,7 @@ import SWPCalculator from "@/components/swp-calculator/SWPCalculator";
 
 export default function DashboardPage() {
   return (
-    <div className="p-4">
+    <div>
       <ClientOnly>
         <SWPCalculator />
       </ClientOnly>
